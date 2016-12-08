@@ -3,8 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <title>cat clicker</title>
+  <script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
+<style>
+	a { margin: 0 10px 0 10px; }
+</style>
 </head>
 <body>
- 
+	<main>
+		<div style="" class="cat-list"></div>
+		<hr />
+		<div style="" class="cat-details"></div>
+	</main>
+
+	<script type="text/template" data-template="cat-details">
+        <div class="cat-preview" data-id="{{id}}">
+        	<div class="cat-score">Score: {{clicks}}</div>
+        	<img class="cat-img" src="{{image}}" />
+            <div class="cat-name">{{name}}</div>
+        </div>
+    </script>
+
+    <script type="text/template" data-template="cat-list-item">
+    	<li class="cat-list-item" data-id="{{id}}">
+            {{id}}: {{name}}
+        </li>
+    </script>
+
+	<script src="js/app.js"></script>
 </body>
 </html>
