@@ -47,7 +47,8 @@ $(function() {
     var octopus = {
         addCat: function(cat) {
             data.add(cat);
-            view.render();
+            catListView.render();
+            catDetailView.render();
         },
 
         removeCat: function(catId) {
@@ -69,13 +70,44 @@ $(function() {
 
         selectCat: function(catId) {
         	data.selectedId = catId;
+            catListView.render();
             catDetailView.render();
         },
 
         init: function() {
+        	newCatView.init();
         	catListView.init();
             catDetailView.init();
         }
+    };
+
+    var newCatView = {
+    	init: function () {
+    		this.$newCat = $('.new-cat');
+    		this.newCatTemplate = $('script[data-template="new-cat-form"]').html();
+
+    		this.$newCat.on('click', 'input[type=button]', function(e) {
+    			octopus.addCat(new Cat(
+    				$(this).siblings('input[name="catname"]').val(),
+					$(this).siblings('input[name="imgurl"]').val()
+    			));
+
+    			newCatView.reset();
+    			e.preventDefault();
+    			return false;
+    		});
+
+    		this.render();
+    	},
+
+    	render: function () {
+    		this.$newCat.html(this.newCatTemplate);
+    	},
+
+    	reset: function () {
+    		this.$newCat.find('input[name="catname"]').val('');
+    		this.$newCat.find('input[name="imgurl"]').val('');
+    	}
     };
 
     var catDetailView = {
@@ -117,7 +149,7 @@ $(function() {
 
         	this.$catList = $('.cat-list');
         	this.$catList.on('click', '.cat-list-item', function(e) {
-                octopus.selectCat($(this).data().id);
+        		octopus.selectCat($(this).data().id);
                 return false;
             });
 
@@ -132,7 +164,8 @@ $(function() {
 			var catListHtml = '';
             octopus.getCats().forEach(function(cat) {
             	catListHtml += catListItemTemplate.replace(/{{id}}/g, cat.id)
-                		.replace(/{{name}}/g, cat.name);
+                		.replace(/{{name}}/g, cat.name)
+                		.replace(/{{selected}}/g, ((cat.id == octopus.getSelectedCat().id)? "selected": ""));
             });
             $catList.html(catListHtml);
         }

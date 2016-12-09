@@ -1,34 +1,49 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>cat clicker</title>
-  <script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
-<style>
-	a { margin: 0 10px 0 10px; }
-</style>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>cat-clicker</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css" media="screen" />
 </head>
 <body>
 	<main>
-		<div style="" class="cat-list"></div>
-		<hr />
-		<div style="" class="cat-details"></div>
+		<header class="new-cat"></header>
+
+		<div class="cat-view-container">
+			<nav class="cat-list-container">
+				<ul class="cat-list"></ul>
+			</nav>
+
+			<div class="cat-details white"></div>
+		</div>
+
+		<footer>susovan ghosh &lt;susovan87@gmail.com&gt;</footer>
 	</main>
+
+	<script type="text/template" data-template="new-cat-form">
+    	<form>
+		  <input type="text" name="catname" placeholder="Cat name" />
+		  <input type="text" name="imgurl" placeholder="Cat image URL" />
+		  <input type="button" value="Add" />
+		</form>
+    </script>
 
 	<script type="text/template" data-template="cat-details">
         <div class="cat-preview" data-id="{{id}}">
-        	<div class="cat-score">Score: {{clicks}}</div>
+        	<h3 class="cat-score">Score: {{clicks}}</h3>
         	<img class="cat-img" src="{{image}}" />
-            <div class="cat-name">{{name}}</div>
+            <h2 class="cat-name">{{name}}</h2>
         </div>
     </script>
 
     <script type="text/template" data-template="cat-list-item">
-    	<li class="cat-list-item" data-id="{{id}}">
-            {{id}}: {{name}}
+    	<li class="cat-list-item {{selected}}" data-id="{{id}}">
+            {{name}}
         </li>
     </script>
 
+    <script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
 	<script src="js/app.js"></script>
 </body>
 </html>
