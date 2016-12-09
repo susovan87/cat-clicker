@@ -4,8 +4,12 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>cat-clicker</title>
-	<link rel="stylesheet" type="text/css" href="css/style.css" media="screen" />
-	<link rel="icon" type="image/png" href="favicon.png" />
+
+	<!-- build:css css/styles.min.css -->
+	<link rel="stylesheet" type="text/css" href="css/styles.css"/>
+	<!-- endbuild -->
+
+	<link rel="icon" type="image/png" href="images/favicon.png" />
 </head>
 <body>
 	<main>
@@ -44,7 +48,9 @@
         </li>
     </script>
 
-    <script src="node_modules/jquery/dist/jquery.slim.min.js"></script>
-	<script src="js/app.js"></script>
+    <!-- build:js js/main.min.js -->
+    <script src="js/vendor/jquery.slim.min.js"></script>
+	<script src="js/main.js"></script>
+	<!-- endbuild -->
 </body>
 </html>

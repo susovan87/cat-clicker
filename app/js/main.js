@@ -40,9 +40,9 @@ $(function() {
         }
     };
 
-    data.add(new Cat('Cat 1', 'img/cat.jpg'));
-    data.add(new Cat('Cat 2', 'img/cat2.jpg'));
-    data.add(new Cat('Cat 3', 'img/cat3.jpg'));
+    data.add(new Cat('Cat 1', 'images/cat.jpg'));
+    data.add(new Cat('Cat 2', 'images/cat2.jpg'));
+    data.add(new Cat('Cat 3', 'images/cat3.jpg'));
     
     var octopus = {
         addCat: function(cat) {
