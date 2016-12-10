@@ -13,30 +13,13 @@ $(function() {
 	};
 	
 	var data = {
-        selectedId: 0,
+        currentCat: null,
 
         cats: [],
 
         add: function (cat) {
         	this.cats[cat.id] = cat;
-        	this.selectedId = cat.id;
-        },
-
-        remove: function (catId) {
-        	this.cats[catId] = null;
-
-        	if(this.selectedId == catId){
-        		// Traverse from start untill an element not null
-        		var i = 0;
-        		while (!this.cats[i]){
-        			i++;
-        		}
-        		this.selectedId = this.cats[i];
-        	}
-        },
-
-        get: function(catId) {
-        	return this.cats[catId];
+        	this.currentCat = cat;
         }
     };
 
@@ -51,26 +34,20 @@ $(function() {
             catDetailView.render();
         },
 
-        removeCat: function(catId) {
-			data.remove(catId);
-		    view.render();
-        },
-
         getCats: function() {
         	return data.cats;
         },
 
-        getCat: function(catId) {
-        	return data.get(catId);
+        getCurrentCat: function() {
+        	return data.currentCat;
         },
 
-        getSelectedCat: function() {
-        	return data.get(data.selectedId);
+        setCurrentCat: function(cat) {
+            data.currentCat = cat;
         },
 
-        selectCat: function(catId) {
-        	data.selectedId = catId;
-            catListView.render();
+        incrementClick: function() {
+        	data.currentCat.clicks++;
             catDetailView.render();
         },
 
@@ -83,91 +60,75 @@ $(function() {
 
     var newCatView = {
     	init: function () {
-    		this.$newCat = $('.new-cat');
-    		this.newCatTemplate = $('script[data-template="new-cat-form"]').html();
-
-    		this.$newCat.on('click', 'input[type=button]', function(e) {
-    			octopus.addCat(new Cat(
-    				$(this).siblings('input[name="catname"]').val(),
-					$(this).siblings('input[name="imgurl"]').val()
-    			));
-
-    			newCatView.reset();
-    			e.preventDefault();
-    			return false;
-    		});
-
-    		this.render();
-    	},
-
-    	render: function () {
-    		this.$newCat.html(this.newCatTemplate);
+    		this.$catName = $('input[name="catname"]'),
+            this.$imgURL = $('input[name="imgurl"]'),
+            this.$addButton = $('input[type=button]');
+            var that = this;
+            
+            this.$addButton.on('click', function(e) {
+                octopus.addCat(new Cat(that.$catName.val(),that.$imgURL.val()));
+                newCatView.reset();
+                e.preventDefault();
+                return false;
+            });
     	},
 
     	reset: function () {
-    		this.$newCat.find('input[name="catname"]').val('');
-    		this.$newCat.find('input[name="imgurl"]').val('');
+    		this.$catName.val('');
+    		this.$imgURL.val('');
     	}
     };
 
     var catDetailView = {
         init: function() {
-        	this.$catDetails = $('.cat-details');
-        	this.catDetailTemplate = $('script[data-template="cat-details"]').html();
-        	
-        	this.$catDetails.on('click', '.cat-img', function(e) {
-                var catId = $(this).parents('.cat-preview').data().id;
-                var cat = octopus.getCat(catId);
-                cat.clicks++;
-                catDetailView.render();
-                return false;
-            });
+        	this.$catImage = $('.cat-img'),
+            this.$catScore = $('.cat-score'),
+            this.$catName = $('.cat-name');
 
-            this.render();
+            this.$catImage.on('click', function (e) {
+                octopus.incrementClick();
+            });
+        	
+        	this.render();
         },
 
         render: function() {
-            var $catDetails = this.$catDetails,
-                catDetailTemplate = this.catDetailTemplate,
-                cat = octopus.getSelectedCat();
-            
-            if(cat){
-            	$catDetails.html(
-            		catDetailTemplate.replace(/{{id}}/g, cat.id)
-            			.replace(/{{name}}/g, cat.name)
-            			.replace(/{{image}}/g, cat.image)
-            			.replace(/{{clicks}}/g, cat.clicks)
-            		);
-
+            var currentCat = octopus.getCurrentCat();
+            if(currentCat){
+                this.$catName.text(currentCat.name);
+                this.$catScore.text(currentCat.clicks);
+                this.$catImage.attr('src',currentCat.image);
             }
         }
     };
 
     var catListView = {
         init: function() {
-        	this.catListItemTemplate = $('script[data-template="cat-list-item"]').html();
-
         	this.$catList = $('.cat-list');
-        	this.$catList.on('click', '.cat-list-item', function(e) {
-        		octopus.selectCat($(this).data().id);
-                return false;
-            });
-
-            this.render();
+        	this.render();
         },
 
         render: function() {
-			// Cache vars for use in forEach() callback (performance)
-            var $catList = this.$catList, 
-            	catListItemTemplate = this.catListItemTemplate;
+            var $catList = this.$catList;
+            var cats = octopus.getCats();
+            var currentCat = octopus.getCurrentCat();
 
-			var catListHtml = '';
-            octopus.getCats().forEach(function(cat) {
-            	catListHtml += catListItemTemplate.replace(/{{id}}/g, cat.id)
-                		.replace(/{{name}}/g, cat.name)
-                		.replace(/{{selected}}/g, ((cat.id == octopus.getSelectedCat().id)? "selected": ""));
+            this.$catList.html('');
+            cats.forEach(function(cat) {
+                var $elm = $('<li />', {html: cat.name, class: 'cat-list-item'});
+                if(currentCat && cat.id === currentCat.id){
+                    $elm.addClass('selected');
+                }
+                $elm.on('click', (function (catCopy) {
+                    return function(){
+                        octopus.setCurrentCat(catCopy);
+                        catDetailView.render();
+                        catListView.render();
+                    };
+                })(cat));
+
+                $elm.appendTo($catList);
             });
-            $catList.html(catListHtml);
         }
     };
 
